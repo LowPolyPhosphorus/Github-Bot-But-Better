@@ -1,0 +1,16 @@
+{
+  "name": "better-github-bot",
+  "version": "1.0.0",
+  "description": "Personal Slack bot: GitHub PR/issue/repo events, daily commit thread, Actions failure alerts + daily CI summary thread.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@slack/web-api": "^7.3.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
