@@ -1,5 +1,6 @@
 const {
   postMessage,
+  postReply,
   getOrCreateDailyThread,
   updateMessage,
   todayLabel,
@@ -32,20 +33,22 @@ async function handleWorkflowRun(payload) {
 
   const conclusion = run.conclusion; // success | failure | cancelled | skipped | ...
 
-  // 1. Immediate alert on failure — the thing you actually want to know fast.
-  if (conclusion === "failure") {
-    await postMessage(
-      `*Workflow failed:* <${run.html_url}|${run.name}> on \`${run.head_branch}\` in *${repository.name}*`
-    );
-  }
-
-  // 2. Running daily summary — one message, edited in place through the day.
+  // get today's thread first, so the failure alert can reply into it
   const date = todayLabel();
   const parent = await getOrCreateDailyThread(
     SUMMARY_MARKER,
     buildSummaryText(date, { total: 0, success: 0, failure: 0, other: 0 })
   );
 
+  // alert shall reply in the thead now!!!!!
+  if (conclusion === "failure") {
+    await postReply(
+      parent.ts,
+      `*Workflow failed:* <${run.html_url}|${run.name}> on \`${run.head_branch}\` in *${repository.name}*`
+    );
+  }
+
+  // running daily sumary for one message, edited in place
   const counts = parseSummary(parent.text) || {
     total: 0,
     success: 0,
